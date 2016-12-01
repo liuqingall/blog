@@ -6,15 +6,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clean Blog</title>
     <link href="./lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
     <!--[if lt IE 9]>
     <script src="./lib/html5shiv/html5shiv.min.js"></script>
     <script src="./lib/respond/respond.js"></script>
     <![endif]-->
 </head>
 <body>
-    
+
+    <!-- 导航栏部分 -->
+    <nav class="navbar navbar-default headernav navbar-custom navbar-fixed-top is-fixed is-visible">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>MENU
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">HOME</a></li>
+                    <li><a href="#">ABOUT</a></li>
+                    <li><a href="#">SAMPLE POST</a></li>
+                    <li><a href="#">CONTACT</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 头部图片 -->
+    <header class="info" style="background-image: url('./images/home-bg.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="introduction">
+                        <h1>Clean Blog</h1>
+                        <hr class="line">
+                        <span class="subtitle">A Clean Blog Theme by Start Bootstrap</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 博客文章 -->
+    <div class="container artical">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 list">
+                <script type=text/html id="arttemp">
+                    <% for(var i = 0;i<item.length;i++){ %>
+                    <div class="article">
+                        <a href="#">
+                            <h2 class="tit"><%= item[i].title %></h2>
+                            <h3 class="subtit"><%= item[i].excerpt %></h3>
+                        </a>
+                        <p class="art-brief">Posted by
+                            <a href="#">Start Bootstrap </a> <%= item[i].created %>
+                        </p>
+                    </div>
+                    <hr>
+                    <% } %>
+                </script>
+            </div>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="pager">
+                    <li class="prev">
+                        <a href="javascript:;">
+                            <span aria-hidden=true>←</span>
+                            NEWER
+                        </a>
+                    </li>
+                    <li class="next">
+                        <a href="javascript:;">OLDER
+                            <span aria-hidden=true>→</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <!-- 底部部分 -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Copyright © Your Website 2016</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 警告提示框 -->
+    <div class="warning">
+        已经是第一页了
+    </div>
 
 <script src="./lib/jquery-1.12.0/jquery-1.12.0.min.js"></script>
 <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="./js/index.js"></script>
+<script src="./lib/template/template-native.js"></script>
+
 </body>
 </html>
