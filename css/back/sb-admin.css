@@ -1,4 +1,4 @@
-/*����������*/
+/*导航条部分*/
 .navbar-admin {
   background-color: #222222;
   border-color: #080808;
@@ -215,11 +215,12 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
     margin-top: 0;
   }
 }
-/*��̨����*/
+/*后台管理*/
 #page-wrapper {
   margin-top: 50px;
   margin-left: 225px;
   padding: 0 10px;
+  overflow: auto;
 }
 @media screen and (max-width: 768px) {
   #page-wrapper {
@@ -227,8 +228,51 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
     margin-left: 0;
   }
 }
-/*ģ̬��*/
+/*模态框*/
 .modal-content {
   width: 600px;
-  height: 600px;
+  min-height: 600px;
+}
+/*
+删除确认*/
+.makeSure {
+  width: 164px;
+  height: 88px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 300px;
+  left: 50%;
+  margin-left: -82px;
+  z-index: 1000;
+  text-align: center;
+  padding-top: 10px;
+  display: none;
+}
+.makeSure p {
+  color: #fff;
+}
+.makeSure .sure {
+  background-color: #4898d5;
+  border: none;
+}
+.makeSure .back {
+  border: none;
+}
+/*
+删除成功*/
+.delete {
+  width: 164px;
+  height: 88px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 300px;
+  left: 50%;
+  margin-left: -82px;
+  z-index: 1000;
+  text-align: center;
+  line-height: 88px;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 5px;
+  display: none;
 }

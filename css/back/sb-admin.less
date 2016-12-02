@@ -1,4 +1,4 @@
-/*µ¼º½Ìõ²¿·Ö*/
+/*å¯¼èˆªæ¡éƒ¨åˆ†*/
 .navbar-admin {
   background-color: #222222;
   border-color: #080808;
@@ -238,11 +238,12 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
 }
 
 
-/*ºóÌ¨¹ÜÀí*/
+/*åå°ç®¡ç†*/
 #page-wrapper {
   margin-top:50px;
   margin-left:225px;
   padding:0 10px;
+  overflow:auto;
 }
 @media screen and (max-width : 768px) {
   #page-wrapper {
@@ -251,8 +252,53 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
   }
 }
 
-/*Ä£Ì¬¿ò*/
+/*æ¨¡æ€æ¡†*/
 .modal-content {
   width: 600px;
-  height: 600px;
+  min-height: 600px;
+
+}
+
+/*
+åˆ é™¤ç¡®è®¤*/
+.makeSure {
+  width: 164px;
+  height: 88px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position:fixed;
+  top:300px;
+  left:50%;
+  margin-left:-82px;
+  z-index: 1000;
+  text-align: center;
+  padding-top:10px;
+  display: none;
+  p {
+    color:#fff;
+  }
+  .sure {
+    background-color: #4898d5;
+    border:none;
+  }
+  .back {
+    border:none;
+  }
+}
+/*
+åˆ é™¤æˆåŠŸ*/
+.delete {
+  width: 164px;
+  height: 88px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position:fixed;
+  top:300px;
+  left:50%;
+  margin-left:-82px;
+  z-index: 1000;
+  text-align: center;
+  line-height: 88px;
+  color:#fff;
+  font-size:20px;
+  border-radius:5px;
+  display: none;
 }
