@@ -2,7 +2,7 @@
 $(function () {
 
     getBlog();
-
+    $(".warning").css('display', "none");
 
     /* 顶部导航栏动画 */
     if ($(window).width() > 1170) {
@@ -56,17 +56,23 @@ $(function () {
             data:{  pagesize:pagesize },
             success:function ( data ) {
                 /* 前后翻页 */
-                $(".pager > .prev > a").click(function () {
+                $(".pager > .prev > a")
+                //先解绑事件再绑定,以免重复触发事件,
+                //因getPageCount函数在getBlog函数中执行,
+                //点击发生后,会重新执行getBlog函数,也就会再次执行click绑定
+                    .unbind('click').click(function () {
                     if ( pageindex == 1 ){
-                        $(".warning").html("已经是第一页了").css('display', 'block').fadeIn( 2000, "linear").delay(1500).fadeOut( 2000, "linear");
+                        $(".warning").html("已经是第一页了")
+                        //先清除动画再执行,防止动画叠加
+                            .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
                     } else {
                         //局部加载获取数据
                         getBlog( --pageindex, pagesize );
                     }
                 });
-                $(".pager > .next > a").click(function () {
+                $(".pager > .next > a").unbind('click').click(function () {
                     if ( pageindex == data.pagecount ){
-                        $(".warning").html("已经是最后一页了").css('display', 'block').fadeIn( 2000, "linear").delay(1500).fadeOut( 2000, "linear");
+                        $(".warning").html("已经是最后一页了").stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
                     } else {
                         getBlog( ++pageindex, pagesize );
                     }
