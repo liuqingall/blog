@@ -58,9 +58,9 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 list">
                 <script type=text/html id="arttemp">
-                    <% for(var i = 0;i<item.length;i++){ %>
+                    <% for(var i = 0; i < item.length; i++){ %>
                     <div class="article">
-                        <a href="#">
+                        <a href="post.html?id=<%= item[i].id %>">
                             <h2 class="tit"><%= item[i].title %></h2>
                             <h3 class="subtit"><%= item[i].excerpt %></h3>
                         </a>

@@ -1,257 +1,197 @@
-/*
-$(function(){
+﻿$(function(){
 
-   /!* var ue = UE.getEditor('content',{
+    getPosts();
+    $("nav .navbar-header > a").html( window.localStorage.getItem('username') );
+    getUser();
 
-        toolbars:[['Source', 'Undo', 'Redo','bold']],
-
-        autoClearinitialContent:true,
-
-        wordCount:false,
-
-        elementPathEnabled:false
-
-    });*!/
-
-
-
-    function getPage(pageIndex,pageSize){
-
-       $.ajax({
-           url:'http://'+net.url+'/admin/posts',
-           type:'get',
-           dataType:'json',
-           data:{pageindex:pageIndex,pagesize:pageSize},
-           success:function(data) {
-
-               var item = {result:data};
-               var html = template('tpl',item);
-               $('#tbody').append(html);
-
-
-           }
-       });
-   }
-    getPage(1,40);
-    $('#save').on('click',function(){
-
-        var t = parseInt($('#tbody tr:first-child td:last-child').attr('data-id'))+1;
-
-
-        var str =  '<tr>'
-            +'<td>1</td>'
-            +'<td>js</td>'
-            +'<td>'+$("#exampleInputEmail1").val()
-            +'</td>'
-            +'<td data-id='+t+'>'
-            +'<button type="button" class="btn btn-primary">编辑</button>'
-            +' <button type="button" class="btn btn-danger">删除</button>'
-            +'</td>'
-            +'</tr>';
-        $('#tbody').prepend(str);
-
-        $('#tbody tr:gt(0)').each(function(i,v){
-
-            $($($(this).children()).eq(0)).html(i+2);
+    function getPosts() {
+        $.ajax({
+            url:'http://'+net.url+'/admin/posts',
+            type:'get',
+            dataType:'json',
+            data:{pageindex:1},
+            success:function(data) {
+                var item = {result:data};
+                var html = template('tpl',item);
+                $('#tbody').html(html);
+            }
         });
+    }
 
-        $('#myModal').hide();
-        $('.modal-backdrop.in').hide();
-
-
-
-
-    });
-    $("#tbody").on("click", ".btn-danger", function () {
-
-        var id = $(this).parent().data("id");
-
-        $('.makeSure').fadeIn(500);
-
-        $('.back').on('click',function(){
-            $('.makeSure').fadeOut(500);
-        });
-        $('.sure').on('click',function(){
-            $('[data-id=' + id + ']').parent().remove();
-            $('.makeSure').fadeOut(500);
-
-        })
-    });
-
-
-
-});
-*/
-$(function(){
-    var id;//记录修改帖子的id
-    var ue = UE.getEditor('content',{
-        //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-        toolbars:[['Source', 'Undo', 'Redo','bold']],
-        //focus时自动清空初始化时的内容
-        autoClearinitialContent:true,
-        //关闭字数统计
-        wordCount:false,
-        //关闭elementPath
-        elementPathEnabled:false
-
-    });
-    //获取所有数据
-   function getData() {
-
-       $.ajax({
-           url:'http://'+net.url+'/admin/posts',
-           type:'get',
-           dataType:'json',
-           data:{pageindex:1,pagesize:15},
-           success:function(data) {
-
-                //判断权限
-               if(data && data.code===-1) {
-                   location.href ='#';
-                   return;
-               }
-               var item = {result:data};
-               var html = template('tpl',item);
-               $('#tbody').append(html);
-
-
-           }
-
-       });
-
-   }
-    getData();
-    //删除
-    $('#tbody').on('click','.btn-danger', function(){
-       var id = $(this).parent().data('id');
-
-        //提示是否删除
-        $('.makeSure').fadeIn(500);
-
-        $('.back').on('click',function(){
-            $('.makeSure').fadeOut(500);
-        });
-        //从数据库中将数据删除
-        $('.sure').on('click',function(){
-            $.ajax({
-                url:'http://'+net.url+'/admin/posts/delete/'+id,
-                type:'get',
-                data:{id:id},
-                success:function(data){
-                    //判断权限
-                    if(data && data.code===-1) {
-                        location.href ='#';
-                        return;
-                    }
-                    if(data.code===1) {
-                        $('.delete').text('删除成功').fadeIn(500).delay(1000).fadeOut(500);
-                        $("#tbody tr").remove();//先将tbody中的内容清空
-                        getData();//重新请求数据
+    //绑定用户ID,以便在跳转用户管理时判断权限。
+    //数据庞大时不宜使用,应添加相应接口。
+    function getUser() {
+        $.ajax({
+            url:'http://'+net.url+'/admin/users',
+            type:'get',
+            dataType:'json',
+            success:function(data) {
+                if( data ){
+                    for ( var i = 0; i < data.length; i++ ){
+                        if( data[i].username === $("nav .navbar-header > a").html() ){
+                            $("nav .navbar-header > a").attr('userid', data[i].id );
+                        }
                     }
                 }
-            });
-            $('.makeSure').fadeOut(500);
-
+                return;
+            }
         });
+    }
 
+    var isSave = -1;
 
-    });
-    //添加或修改的标识
-    var flag = -1;
-    //添加帖子
-   $('#btnAdd').on('click',function(){
-       flag = 1;//添加帖子
-       $('#myModalLabel').text('添加帖子');
-       $("#myModal").modal("show");
+    //当模态窗口 隐藏的时候触发的事件
+    //清空输入框内容
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        $("#form input[type=text], #form textarea").val("");
+        isSave = -1;
+    })
 
-   });
-    //保存帖子
-    $('#save').on('click',function(){
-        //新创建的帖子的id
+    //添加时切换保存按钮所发生的的请求
+    $("#btnAdd").on("click", function () {
+        isSave = 1;
+        $("#myModalLabel").text("添加帖子");
+    })
 
-            data = $('form').serialize();
-
-        data = data.replace("editorValue","content");
-
-
-
-        if(flag===1) {
+    //逻辑:判断是添加还是编辑
+    $("#btnSave").click(function () {
+        var id = $("#id").val(),
+            title = $("#title").val(),
+            content = $("#content").val();
+        if ( isSave == 1 ){
+            //此时为保存新数据
             $.ajax({
                 url:'http://'+net.url+'/admin/posts/create',
                 type:'post',
-                data:{title:$('#exampleInputEmail1').val(),content:data},
-                success:function(data){
-                    //判断权限
-                    if(data && data.code===-1) {
-                        location.href ='#';
-                        return;
-                    }
-                    if(data.code===1) {
-                        $('.delete').text('保存成功').fadeIn(500).delay(1000).fadeOut(500);
+                dataType:'json',
+                data:{title:title,content:content},
+                success:function(data) {
+                    if( data && data.code === 1 ){
+                        //操作数据库成功
                         $("#myModal").modal("hide");
-                        $("#tbody tr").remove();//先将tbody中的内容清空
-                        //重新加载数据
-                        getData();
-                    }else {
-                        $('.delete').text('保存失败').fadeIn(500).delay(1000).fadeOut(500);
+                        $(".prompting").html( data.msg ).stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                        //刷新列表显示最新数据库数据
+                        getPosts();
+                    } else {
+                        $(".prompting").html( data.msg ).stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
                     }
                 }
             });
-        } else if(flag==2) {
-         //修改帖子
+        } else if ( isSave == 2){
+            //此时为编辑数据
             $.ajax({
                 url:'http://'+net.url+'/admin/posts/update',
                 type:'post',
-                data:{title:$('#exampleInputEmail1').val(),content:data,id:id},
+                dataType:'json',
+                data:{id:id,title:title,content:content},
                 success:function(data) {
-                    if(data.code===-1) {
-                        location.href='#';
-                        return false;
-                    }
-                    if(data.code===1) {
-                        $('.delete').text('修改成功').fadeIn(500).delay(1000).fadeOut(500);
+                    if( data && data.code === 1 ){
+                        //成功则提示成功并且刷新列表
                         $("#myModal").modal("hide");
-                        $("#tbody tr").remove();//先将tbody中的内容清空
-                        //重新加载数据
-                        getData();
-                    }else {
-                        $('.delete').text('修改失败').fadeIn(500).delay(1000).fadeOut(500);
+                        $(".prompting").html( data.msg )
+                            .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                        getPosts();
+                    } else {
+                        //未成功操作数据库数据则提示出错
+                        $(".prompting").html( data.msg )
+                            .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
                     }
                 }
-
-            })
+            });
         }
-
     });
-    //编辑帖子
-    $('#tbody').on('click','.btn-primary',function(){
-
-        flag =2;
-        id = $(this).parent().data('id');
-        //修改标题
-        $('#myModalLabel').text('编辑帖子');$("#myModal").modal("show");
 
 
+    $("#tbody").on("click", ".btn-primary", function () {
+        isSave = 2;
+        $("#myModalLabel").text("编辑帖子");
+
+        $("#myModal").modal("show");
+
+        //获取绑定ID
+        var id = +$(this).parent().parent().children().eq(0).html();
         $.ajax({
-            url:'http://'+net.url+'/admin/posts/'+id,
+            url:'http://'+net.url+'/admin/posts/' + id,
             type:'get',
-            //data:{id:id},
+            dataType:'json',
             success:function(data) {
-
-                $('#exampleInputEmail1').val(data.data.title);
-                $('#id').val(data.data.id);
-                ue.setContent(data.data.content);
+                //从后台获取相应数据
+                $("#title").val(data.data.title);
+                $("#content").val(data.data.content);
+                $("#id").val( data.data.id );
             }
         });
 
-    });
-    //当模态框消失的时候要改变flag的值，将编辑器中的内容清空
-    //在模态框完全隐藏后触发
-    $('#myModal').on('hidden.bs.modal',function(){
-        flag = -1;
-        $('#exampleInputEmail1').val('');
-        ue.setContent('');
-    });
-    //搜索帖子
+    })
 
+    $("#tbody").on("click", ".btn-danger", function () {
+        var id = +$(this).parent().parent().children().eq(0).html();
+        //提示是否确认删除以便防止失误操作
+        $(".del").stop().fadeIn(200, "linear");
+        $(".confirm").unbind('click').click(function () {
+            $(".del").css('display', 'none');
+            //发送请求操作数据库
+            $.ajax({
+                url:'http://'+net.url+'/admin/posts/delete/' + id,
+                type:'get',
+                dataType:'json',
+                success:function(data) {
+                    if( data && data.code === 1 ){
+                        //此时成功操作数据库,重新渲染最新页面
+                        $("#myModal").modal("hide");
+                        $(".prompting").html( data.msg )
+                            .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                        getPosts();
+                    } else {
+                        $(".prompting").html( data.msg )
+                            .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                    }
+                }
+            });
+        });
+
+        $(".cancel").unbind('click').click(function () {
+            $(".del").fadeOut(1000, "linear");
+        });
+    });
+
+    $("#btnSearch").click(function () {
+        var wd = $("#txtSearch").val();
+        $.ajax({
+            url:'http://'+net.url+'/admin/posts/search',
+            type:'get',
+            datatype:'json',
+            data:{wd:wd},
+            success:function (data) {
+                if( !data[0] ){
+                    $(".prompting").html( '未搜索到相关帖子,请重试!' )
+                        .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                    return;
+                }
+                var item = {result:data};
+                var html = template('tpl',item);
+                $('#tbody').html(html);
+            }
+        });
+    });
+
+    //点击用户管理时先进行权限查询
+    //只有用户role属性为admin时,有权限进行用户管理
+    $(".userManage").click(function () {
+        var uid = $("nav .navbar-header > a").attr('userid');
+        $.ajax({
+            url:'http://'+net.url+'/admin/users/' + uid,
+            type:'get',
+            dataType:'json',
+            success:function(data) {
+                if( data && data.role == 'admin' ){
+                    window.location.href = '/myblog/blog/admin/user.html';
+                } else {
+                    $(".prompting").html( '您没有足够的权限！' )
+                        .stop(true).fadeIn( 500, "linear").delay(1500).fadeOut( 1500, "linear");
+                }
+            }
+        });
+        return false;
+    });
 });

@@ -239,14 +239,14 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
 
 
 /*后台管理*/
-#page-wrapper {
+#page-wrapper, #page-wrapper1{
   margin-top:50px;
   margin-left:225px;
   padding:0 10px;
   overflow:auto;
 }
 @media screen and (max-width : 768px) {
-  #page-wrapper {
+  #page-wrapper,#page-wrapper1 {
     margin-top:100px;
     margin-left:0;
   }
@@ -300,5 +300,13 @@ fieldset[disabled] .navbar-admin .btn-link:focus {
   color:#fff;
   font-size:20px;
   border-radius:5px;
+  display: none;
+}
+#page-wrapper,#page-wrapper1 {
+  position:absolute;
+  top:0;
+  left:0;
+}
+#page-wrapper1 {
   display: none;
 }
